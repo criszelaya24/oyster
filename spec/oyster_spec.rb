@@ -1,17 +1,17 @@
 require 'oystercard'
 describe OysterCard do
 	describe '#Balance' do
-		#it {expect(subject).to respond_to :balance}
+		#it {expect(subject).to respond_to :balance} (Respond to attr)
 		it 'Expect that the init balance equal to 0' do
 			expect(subject.balance).to eq 0
 		end
 	end
 
 	describe '#top_up' do
-		#it{is_expected.to respond_to(:top_up).with(1).argument}
+		#it{is_expected.to respond_to(:top_up).with(1).argument} (Respond to a funtion)
 		it 'Change the balance when we top up our card' do
 			expect{subject.top_up(10)}.to change {subject.balance}.by 10
-			# oystercard = OysterCard.new
+			# oystercard = OysterCard.new (MY WAY)
 			# oystercard.top_up(10)
 			# expect(oystercard.balance).to eq 10
 		end
@@ -35,6 +35,24 @@ describe OysterCard do
 		it 'Change the balance when we reduct from our card' do
 			subject.top_up(20)
 			expect(subject.reduct(10)).to eq 10
+		end
+	end
+
+	describe '#In journy' do
+		it 'Is initially not in a journey' do
+			#expect(subject.in_journey?).to eq false (My way)
+			expect(subject).not_to be_in_journey
+		end
+
+		it 'Can touch in' do
+			subject.touch_in
+			expect(subject).to be_in_journey
+		end
+
+		it 'Can touch out' do
+			subject.touch_in
+			subject.touch_out
+			expect(subject).not_to be_in_journey
 		end
 	end
 end
