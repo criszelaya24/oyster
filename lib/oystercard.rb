@@ -1,5 +1,6 @@
 class OysterCard
-attr_accessor :balance, :reduct, :status
+attr_accessor :balance, :status
+MINIMUN_AMOUNT = 1
 DEFAULT_BALANCE = 0
 LIMIT = 90
 	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false)
@@ -23,6 +24,7 @@ LIMIT = 90
 	end
 
 	def touch_in
+		fail 'Insufficient balance to touch in' if enough?
 		@status = true
 	end
 
@@ -31,6 +33,10 @@ LIMIT = 90
 	end
 
 private
+	
+	def enough?
+		@balance < MINIMUN_AMOUNT
+	end
 
 	def full?
 		@balance >= @limit

@@ -38,21 +38,29 @@ describe OysterCard do
 		end
 	end
 
-	describe '#In journy' do
+	describe '#Status_journy' do
 		it 'Is initially not in a journey' do
 			#expect(subject.in_journey?).to eq false (My way)
 			expect(subject).not_to be_in_journey
 		end
 
 		it 'Can touch in' do
+			subject.top_up(2)
 			subject.touch_in
 			expect(subject).to be_in_journey
 		end
 
 		it 'Can touch out' do
+			subject.top_up(2)
 			subject.touch_in
 			subject.touch_out
 			expect(subject).not_to be_in_journey
+		end
+	end
+
+	context '#Minimal Amount' do
+		it 'raise an error when start a journey with not enough money' do
+			expect {subject.touch_in}.to raise_error('Insufficient balance to touch in')
 		end
 	end
 end
