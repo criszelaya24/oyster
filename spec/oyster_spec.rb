@@ -16,12 +16,25 @@ describe OysterCard do
 			# expect(oystercard.balance).to eq 10
 		end
 		it 'Expect an error when is top up more than the limit' do
-			subject.top_up(OysterCard::LIMIT)
+			limit = OysterCard::LIMIT
+			subject.top_up(limit)
 			expect {subject.top_up(1)}.to raise_error 'Limit reached, you can not to up more than 90'
 		end
 
 		it 'Expect an error when is top up for first time and the amount is more than the limit' do
 			expect {subject.top_up(91)}.to raise_error 'Limit reached, you can not to up more than 90'
+		end
+	end
+
+	describe '#Reduct' do
+		it{is_expected.to respond_to(:reduct).with(1).argument}
+		it 'Expect an error when try to reduct money and you have 0' do
+			expect {subject.reduct(1)}.to raise_error('You do not have money inside to reduct from the card')
+		end
+
+		it 'Change the balance when we reduct from our card' do
+			subject.top_up(20)
+			expect(subject.reduct(10)).to eq 10
 		end
 	end
 end
