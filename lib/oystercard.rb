@@ -1,8 +1,11 @@
 class OysterCard
 attr_accessor :balance, :status
+# CONSTANT
 MINIMUN_AMOUNT = 1
 DEFAULT_BALANCE = 0
 LIMIT = 90
+
+#Initiation Methods
 	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false)
 		@balance = balance
 		@limit = limit
@@ -12,11 +15,6 @@ LIMIT = 90
 	def top_up(amount)
 		fail "Limit reached, you can not to up more than #{LIMIT}" if full? || @balance + amount > @limit
 		@balance += amount
-	end
-
-	def reduct(amount)
-		fail 'You do not have money inside to reduct from the card' if emty?
-		@balance -= amount
 	end
 
 	def in_journey?
@@ -29,11 +27,16 @@ LIMIT = 90
 	end
 
 	def touch_out
+		reduct(MINIMUN_AMOUNT)
 		@status = false
 	end
 
 private
-	
+
+	def reduct(amount)
+		@balance -= amount
+	end
+
 	def enough?
 		@balance < MINIMUN_AMOUNT
 	end

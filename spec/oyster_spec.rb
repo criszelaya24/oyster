@@ -26,17 +26,17 @@ describe OysterCard do
 		end
 	end
 
-	describe '#Reduct' do
-		it{is_expected.to respond_to(:reduct).with(1).argument}
-		it 'Expect an error when try to reduct money and you have 0' do
-			expect {subject.reduct(1)}.to raise_error('You do not have money inside to reduct from the card')
-		end
+	# describe '#Reduct' do
+	# 	it{is_expected.to respond_to(:reduct).with(1).argument}
+	# 	# it 'Expect an error when try to reduct money and you have 0' do
+	# 	# 	expect {subject.reduct(1)}.to raise_error('You do not have money inside to reduct from the card')
+	# 	# end
 
-		it 'Change the balance when we reduct from our card' do
-			subject.top_up(20)
-			expect(subject.reduct(10)).to eq 10
-		end
-	end
+	# 	it 'Change the balance when we reduct from our card' do
+	# 		subject.top_up(20)
+	# 		expect(subject.reduct(10)).to eq 10
+	# 	end
+	# end
 
 	describe '#Status_journy' do
 		it 'Is initially not in a journey' do
@@ -58,9 +58,17 @@ describe OysterCard do
 		end
 	end
 
-	context '#Minimal Amount' do
+	describe '#touch in' do
 		it 'raise an error when start a journey with not enough money' do
 			expect {subject.touch_in}.to raise_error('Insufficient balance to touch in')
+		end
+	end
+
+	describe '#touch out' do
+		it 'Reduce the amount of the journey to your balance' do
+			subject.top_up(2)
+			subject.touch_in
+			expect {subject.touch_out}.to change {subject.balance}.by(-OysterCard::MINIMUN_AMOUNT)
 		end
 	end
 end
