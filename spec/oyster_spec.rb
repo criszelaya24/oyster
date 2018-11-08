@@ -1,5 +1,6 @@
 require 'oystercard'
 describe OysterCard do
+	let(:station) {double :station}
 	describe '#Balance' do
 		#it {expect(subject).to respond_to :balance} (Respond to attr)
 		it 'Expect that the init balance equal to 0' do
@@ -18,7 +19,7 @@ describe OysterCard do
 		it 'Expect an error when is top up more than the limit' do
 			limit = OysterCard::LIMIT
 			subject.top_up(limit)
-			expect {subject.top_up(1)}.to raise_error 'Limit reached, you can not to up more than 90'
+			expect {subject.top_up(1)}.to raise_error "Limit reached, you can not to up more than #{limit}"
 		end
 
 		it 'Expect an error when is top up for first time and the amount is more than the limit' do
@@ -46,13 +47,13 @@ describe OysterCard do
 
 		it 'Can touch in' do
 			subject.top_up(2)
-			subject.touch_in
+			subject.touch_in(station)
 			expect(subject).to be_in_journey
 		end
 
 		it 'Can touch out' do
 			subject.top_up(2)
-			subject.touch_in
+			subject.touch_in(station)
 			subject.touch_out
 			expect(subject).not_to be_in_journey
 		end
@@ -60,15 +61,21 @@ describe OysterCard do
 
 	describe '#touch in' do
 		it 'raise an error when start a journey with not enough money' do
-			expect {subject.touch_in}.to raise_error('Insufficient balance to touch in')
+			expect {subject.touch_in(station)}.to raise_error('Insufficient balance to touch in')
 		end
 	end
 
 	describe '#touch out' do
 		it 'Reduce the amount of the journey to your balance' do
 			subject.top_up(2)
-			subject.touch_in
+			subject.touch_in(station)
 			expect {subject.touch_out}.to change {subject.balance}.by(-OysterCard::MINIMUN_AMOUNT)
 		end
+	end
+
+	it '#Store the entry station' do
+		subject.top_up(2)
+		subject.touch_in(station)
+		expect(subject.entry_station).to eq station
 	end
 end

@@ -1,5 +1,5 @@
 class OysterCard
-attr_accessor :balance, :status
+attr_accessor :balance, :status, :entry_station
 # CONSTANT
 MINIMUN_AMOUNT = 1
 DEFAULT_BALANCE = 0
@@ -18,22 +18,24 @@ LIMIT = 90
 	end
 
 	def in_journey?
-		@status
+		!!@entry_station
 	end
 
-	def touch_in
+	def touch_in(station)
 		fail 'Insufficient balance to touch in' if enough?
 		@status = true
+		@entry_station = station
 	end
 
 	def touch_out
-		reduct(MINIMUN_AMOUNT)
+		deduct(MINIMUN_AMOUNT)
 		@status = false
+		@entry_station = nil
 	end
 
 private
 
-	def reduct(amount)
+	def deduct(amount)
 		@balance -= amount
 	end
 
