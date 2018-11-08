@@ -1,15 +1,16 @@
 class OysterCard
-attr_accessor :balance, :status, :entry_station
+attr_accessor :balance, :status, :entry_station, :exit_station, :journeys
 # CONSTANT
 MINIMUN_AMOUNT = 1
 DEFAULT_BALANCE = 0
 LIMIT = 90
 
 #Initiation Methods
-	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false)
+	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false, journeys = {})
 		@balance = balance
 		@limit = limit
 		@status = status
+		@journeys = journeys
 	end
 
 	def top_up(amount)
@@ -21,16 +22,19 @@ LIMIT = 90
 		!!@entry_station
 	end
 
-	def touch_in(station)
+	def touch_in(entry_station)
 		fail 'Insufficient balance to touch in' if enough?
 		@status = true
-		@entry_station = station
+		@entry_station = entry_station
+		@journeys.store(:entry_station,@entry_station)
 	end
 
-	def touch_out
+	def touch_out(exit_station)
 		deduct(MINIMUN_AMOUNT)
 		@status = false
 		@entry_station = nil
+		@exit_station = exit_station
+		@journeys.store(:exit_station,@exit_station)
 	end
 
 private

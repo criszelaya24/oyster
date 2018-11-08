@@ -1,6 +1,8 @@
 require 'oystercard'
 describe OysterCard do
-	let(:station) {double :station}
+	let(:entry_station) {double :entry_station}
+	let(:exit_station) {double :exit_station}
+	let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
 	describe '#Balance' do
 		#it {expect(subject).to respond_to :balance} (Respond to attr)
 		it 'Expect that the init balance equal to 0' do
@@ -47,35 +49,54 @@ describe OysterCard do
 
 		it 'Can touch in' do
 			subject.top_up(2)
-			subject.touch_in(station)
+			subject.touch_in(entry_station)
 			expect(subject).to be_in_journey
 		end
 
 		it 'Can touch out' do
 			subject.top_up(2)
-			subject.touch_in(station)
-			subject.touch_out
+			subject.touch_in(entry_station)
+			subject.touch_out(exit_station)
 			expect(subject).not_to be_in_journey
 		end
 	end
 
 	describe '#touch in' do
 		it 'raise an error when start a journey with not enough money' do
-			expect {subject.touch_in(station)}.to raise_error('Insufficient balance to touch in')
+			expect {subject.touch_in(entry_station)}.to raise_error('Insufficient balance to touch in')
 		end
+
+			it '#Store the entry station' do
+		subject.top_up(2)
+		subject.touch_in(entry_station)
+		expect(subject.entry_station).to eq entry_station
+	end
+
 	end
 
 	describe '#touch out' do
 		it 'Reduce the amount of the journey to your balance' do
 			subject.top_up(2)
-			subject.touch_in(station)
-			expect {subject.touch_out}.to change {subject.balance}.by(-OysterCard::MINIMUN_AMOUNT)
+			subject.touch_in(entry_station)
+			expect {subject.touch_out(exit_station)}.to change {subject.balance}.by(-OysterCard::MINIMUN_AMOUNT)
 		end
-	end
 
-	it '#Store the entry station' do
-		subject.top_up(2)
-		subject.touch_in(station)
-		expect(subject.entry_station).to eq station
+		it 'Verify if the exit station is saved' do
+			subject.top_up(5)
+			subject.touch_in(entry_station)
+			subject.touch_out(exit_station)
+			expect(subject.exit_station).to eq exit_station
+		end
+
+		it 'has an empty list of journeys by default' do
+			expect(subject.journeys).to be_empty
+		end
+
+		it 'stores a journey' do
+			subject.top_up(3)
+			subject.touch_in(entry_station)
+		  	subject.touch_out(exit_station)
+		  	expect(subject.journeys).to include journey
+		end	
 	end
 end
