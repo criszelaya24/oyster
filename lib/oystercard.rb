@@ -6,10 +6,11 @@ DEFAULT_BALANCE = 0
 LIMIT = 90
 
 #Initiation Methods
-	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false, journeys = {})
+	def initialize(balance = DEFAULT_BALANCE, limit = LIMIT, status = false, last_jorney = {}, journeys = [])
 		@balance = balance
 		@limit = limit
 		@status = status
+		@last_jorney = last_jorney
 		@journeys = journeys
 	end
 
@@ -26,7 +27,7 @@ LIMIT = 90
 		fail 'Insufficient balance to touch in' if enough?
 		@status = true
 		@entry_station = entry_station
-		@journeys.store(:entry_station,@entry_station)
+		@last_jorney.store(:entry_station,@entry_station)
 	end
 
 	def touch_out(exit_station)
@@ -34,10 +35,15 @@ LIMIT = 90
 		@status = false
 		@entry_station = nil
 		@exit_station = exit_station
-		@journeys.store(:exit_station,@exit_station)
+		@last_jorney.store(:exit_station,@exit_station)
+		save_journey
 	end
 
 private
+
+	def save_journey
+		@journeys.push(@last_jorney)
+	end
 
 	def deduct(amount)
 		@balance -= amount
